@@ -1,5 +1,14 @@
 # AWS Security Hub SOC
 
+[![Release](https://img.shields.io/github/v/release/yourusername/aws-security-hub-soc)](https://github.com/yourusername/aws-security-hub-soc/releases)
+[![AWS](https://img.shields.io/badge/AWS-Security%20Hub-FF9900?logo=amazon-aws)](https://aws.amazon.com/security-hub/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://docs.docker.com/compose/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://makeapullrequest.com)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/yourusername/aws-security-hub-soc/graphs/commit-activity)
+[![Version](https://img.shields.io/badge/version-v1.0.0-blue)](https://github.com/yourusername/aws-security-hub-soc/releases/tag/v1.0.0)
+[![Security](https://img.shields.io/badge/Security-SOC%202-red)](https://www.sans.org/cyber-security-courses/security-operations-essentials/)
+
 A comprehensive Docker-based solution for managing AWS Security Hub across multiple AWS accounts for Security Operations Center (SOC) compliance monitoring.
 
 ## Overview
@@ -14,6 +23,24 @@ This repository provides a containerized approach to managing AWS Security Hub f
 - **Compliance Monitoring**: Track compliance scores across different security standards
 - **Finding Management**: Export, analyze, and remediate security findings
 - **CSV Export**: Generate reports in CSV format for further analysis
+
+## Supported AWS Services & Standards
+
+### Security Standards
+- ✅ AWS Foundational Security Best Practices v1.0.0
+- ✅ CIS AWS Foundations Benchmark v1.2.0
+- ✅ PCI DSS v3.2.1
+- ✅ AWS Well-Architected Framework
+
+### Integrated Services
+- 🔒 AWS Security Hub
+- 🛡️ AWS Config
+- 👁️ Amazon GuardDuty
+- 🔍 AWS Inspector
+- 🚨 AWS CloudTrail
+- 🔐 AWS IAM
+- 📦 Amazon S3
+- 🖥️ Amazon EC2
 
 ## Prerequisites
 
