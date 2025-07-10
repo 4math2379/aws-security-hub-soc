@@ -1,0 +1,46 @@
+# AWS Credentials - NEVER commit these!
+aws-credentials/
+aws-credentials/*
+*.pem
+*.key
+
+# Output files
+output/
+output/*
+*.json
+*.csv
+*.txt
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+
+# Terraform (if used later)
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Backup files
+*.bak
+*.backup
+
+# Temporary files
+tmp/
+temp/
+*.tmp

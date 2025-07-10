@@ -1,0 +1,74 @@
+
+
+services:
+  awscli-account1:
+    image: amazon/aws-cli:latest
+    container_name: aws-security-hub-account1
+    volumes:
+      - ./aws-credentials/account1:/root/.aws:ro
+      - ./aws-scripts:/aws-scripts:ro
+      - ./output/account1:/output
+    working_dir: /aws-scripts
+    environment:
+      - AWS_DEFAULT_REGION=eu-west-3
+      - ACCOUNT_NAME=account1
+    entrypoint: ["/bin/bash"]
+    tty: true
+    stdin_open: true
+    networks:
+      - aws-security-network
+
+  awscli-account2:
+    image: amazon/aws-cli:latest
+    container_name: aws-security-hub-account2
+    volumes:
+      - ./aws-credentials/account2:/root/.aws:ro
+      - ./aws-scripts:/aws-scripts:ro
+      - ./output/account2:/output
+    working_dir: /aws-scripts
+    environment:
+      - AWS_DEFAULT_REGION=eu-west-3
+      - ACCOUNT_NAME=account2
+    entrypoint: ["/bin/bash"]
+    tty: true
+    stdin_open: true
+    networks:
+      - aws-security-network
+
+  awscli-account3:
+    image: amazon/aws-cli:latest
+    container_name: aws-security-hub-account3
+    volumes:
+      - ./aws-credentials/account3:/root/.aws:ro
+      - ./aws-scripts:/aws-scripts:ro
+      - ./output/account3:/output
+    working_dir: /aws-scripts
+    environment:
+      - AWS_DEFAULT_REGION=eu-west-3
+      - ACCOUNT_NAME=account3
+    entrypoint: ["/bin/bash"]
+    tty: true
+    stdin_open: true
+    networks:
+      - aws-security-network
+
+  security-hub-aggregator:
+    image: amazon/aws-cli:latest
+    container_name: aws-security-hub-aggregator
+    volumes:
+      - ./aws-credentials/master:/root/.aws:ro
+      - ./aws-scripts:/aws-scripts:ro
+      - ./output/aggregated:/output
+    working_dir: /aws-scripts
+    environment:
+      - AWS_DEFAULT_REGION=eu-west-3
+      - ACCOUNT_NAME=master
+    entrypoint: ["/bin/bash"]
+    tty: true
+    stdin_open: true
+    networks:
+      - aws-security-network
+
+networks:
+  aws-security-network:
+    driver: bridge
