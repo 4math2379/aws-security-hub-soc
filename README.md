@@ -9,11 +9,25 @@
 [![Version](https://img.shields.io/badge/version-v1.0.0-blue)](https://github.com/4math2379/aws-security-hub-soc/releases/tag/v1.0.0)
 [![Security](https://img.shields.io/badge/Security-SOC%202-red)](https://www.sans.org/cyber-security-courses/security-operations-essentials/)
 
-A comprehensive Docker-based solution for managing AWS Security Hub across multiple AWS accounts for Security Operations Center (SOC) compliance monitoring.
+A comprehensive Docker-based solution that enables SysOps and audit teams to apply SOC methodologies when managing AWS Security Hub across multiple AWS accounts and landing zones.
 
 ## Overview
 
-This repository provides a containerized approach to managing AWS Security Hub findings, compliance monitoring, and automated remediation across multiple AWS accounts. It's designed for SOC teams to efficiently monitor and maintain security compliance.
+This repository provides a containerized approach to managing AWS Security Hub findings, compliance monitoring, and automated remediation across multiple AWS accounts. Originally developed for auditing multiple AWS landing zones, this tool empowers SysOps and audit teams to leverage SOC (Security Operations Center) methodologies in their security assessments and compliance monitoring workflows.
+
+### Target Audience
+
+- **SysOps Teams**: Streamline security monitoring across multiple AWS accounts
+- **Audit Teams**: Conduct comprehensive security audits using SOC best practices
+- **Cloud Security Professionals**: Assess and monitor multi-account AWS environments
+- **Landing Zone Administrators**: Maintain security compliance across complex AWS organizations
+
+### Key Use Cases
+
+- **Multi-Landing Zone Audits**: Efficiently audit security posture across multiple customer landing zones
+- **Compliance Assessment**: Track and report on compliance against multiple security standards
+- **Security Finding Aggregation**: Consolidate security findings from numerous AWS accounts
+- **Automated Reporting**: Generate audit-ready reports for stakeholder review
 
 ## Features
 
@@ -192,6 +206,25 @@ Inside any container, you can run the following scripts:
 - Runs from master account
 - Aggregates findings across all member accounts
 - Provides cross-account visibility
+
+## Real-World Benefits
+
+### From Field Experience
+
+This tool has proven invaluable during numerous customer audits, particularly when assessing:
+
+- **Standardized Assessments**: Apply consistent SOC methodologies across diverse AWS architectures
+- **Time Efficiency**: Reduce audit time from days to hours with automated finding aggregation
+- **Comprehensive Reporting**: Generate executive-ready compliance reports across all accounts
+- **Risk Prioritization**: Identify critical issues across hundreds of AWS accounts simultaneously
+
+### Why SysOps and Audit Teams Choose This Tool
+
+- **Isolation**: Each AWS account runs in its own container, preventing credential leakage
+- **Repeatability**: Standardized scripts ensure consistent audits across engagements
+- **Scalability**: Easily add new accounts or landing zones as needed
+- **Auditability**: All findings and reports are timestamped and preserved
+- **SOC Methodology**: Apply proven security operations practices without a full SOC team
 
 ## Configuration
 
