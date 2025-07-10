@@ -27,20 +27,20 @@ This repository provides a containerized approach to managing AWS Security Hub f
 ## Supported AWS Services & Standards
 
 ### Security Standards
-- ✅ AWS Foundational Security Best Practices v1.0.0
-- ✅ CIS AWS Foundations Benchmark v1.2.0
-- ✅ PCI DSS v3.2.1
-- ✅ AWS Well-Architected Framework
+- AWS Foundational Security Best Practices v1.0.0
+- CIS AWS Foundations Benchmark v1.2.0
+- PCI DSS v3.2.1
+- AWS Well-Architected Framework
 
 ### Integrated Services
-- 🔒 AWS Security Hub
-- 🛡️ AWS Config
-- 👁️ Amazon GuardDuty
-- 🔍 AWS Inspector
-- 🚨 AWS CloudTrail
-- 🔐 AWS IAM
-- 📦 Amazon S3
-- 🖥️ Amazon EC2
+- AWS Security Hub
+- AWS Config
+- Amazon GuardDuty
+- AWS Inspector
+- AWS CloudTrail
+- AWS IAM
+- Amazon S3
+- Amazon EC2
 
 ## Prerequisites
 
