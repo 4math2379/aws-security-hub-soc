@@ -1,12 +1,12 @@
 # AWS Security Hub SOC
 
-[![Release](https://img.shields.io/github/v/release/yourusername/aws-security-hub-soc)](https://github.com/yourusername/aws-security-hub-soc/releases)
+[![Release](https://img.shields.io/github/v/release/4math2379/aws-security-hub-soc)](https://github.com/4math2379/aws-security-hub-soc/releases)
 [![AWS](https://img.shields.io/badge/AWS-Security%20Hub-FF9900?logo=amazon-aws)](https://aws.amazon.com/security-hub/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://docs.docker.com/compose/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://makeapullrequest.com)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/yourusername/aws-security-hub-soc/graphs/commit-activity)
-[![Version](https://img.shields.io/badge/version-v1.0.0-blue)](https://github.com/yourusername/aws-security-hub-soc/releases/tag/v1.0.0)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/4math2379/aws-security-hub-soc/graphs/commit-activity)
+[![Version](https://img.shields.io/badge/version-v1.0.0-blue)](https://github.com/4math2379/aws-security-hub-soc/releases/tag/v1.0.0)
 [![Security](https://img.shields.io/badge/Security-SOC%202-red)](https://www.sans.org/cyber-security-courses/security-operations-essentials/)
 
 A comprehensive Docker-based solution for managing AWS Security Hub across multiple AWS accounts for Security Operations Center (SOC) compliance monitoring.
@@ -80,7 +80,7 @@ aws-sec/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/aws-security-hub-soc.git
+   git clone https://github.com/4math2379/aws-security-hub-soc.git
    cd aws-security-hub-soc
    ```
 
