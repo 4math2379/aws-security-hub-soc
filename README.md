@@ -220,11 +220,11 @@ This tool has proven invaluable during numerous customer audits, particularly wh
 
 ### Why SysOps and Audit Teams Choose This Tool
 
-1. **Isolation**: Each AWS account runs in its own container, preventing credential leakage
-2. **Repeatability**: Standardized scripts ensure consistent audits across engagements
-3. **Scalability**: Easily add new accounts or landing zones as needed
-4. **Auditability**: All findings and reports are timestamped and preserved
-5. **SOC Methodology**: Apply proven security operations practices without a full SOC team
+- **Isolation**: Each AWS account runs in its own container, preventing credential leakage
+- **Repeatability**: Standardized scripts ensure consistent audits across engagements
+- **Scalability**: Easily add new accounts or landing zones as needed
+- **Auditability**: All findings and reports are timestamped and preserved
+- **SOC Methodology**: Apply proven security operations practices without a full SOC team
 
 ## Configuration
 
