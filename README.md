@@ -213,7 +213,6 @@ Inside any container, you can run the following scripts:
 
 This tool has proven invaluable during numerous customer audits, particularly when assessing:
 
-- **Multiple Landing Zones**: Quickly switch between different customer environments without credential conflicts
 - **Standardized Assessments**: Apply consistent SOC methodologies across diverse AWS architectures
 - **Time Efficiency**: Reduce audit time from days to hours with automated finding aggregation
 - **Comprehensive Reporting**: Generate executive-ready compliance reports across all accounts
