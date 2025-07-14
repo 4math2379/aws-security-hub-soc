@@ -74,6 +74,7 @@ aws-sec/
 │   └── master/
 ├── aws-scripts/              # Security Hub automation scripts
 │   ├── enable-security-hub.sh
+│   ├── disable-security-hub.sh
 │   ├── get-findings.sh
 │   ├── get-critical-findings.sh
 │   ├── get-compliance-summary.sh
@@ -165,11 +166,24 @@ Inside any container, you can run the following scripts:
    ./remediate-findings.sh
    ```
 
+7. **Disable Security Hub**
+   ```bash
+   ./disable-security-hub.sh
+   ```
+
 ## Scripts Description
 
 ### enable-security-hub.sh
 - Enables AWS Security Hub if not already enabled
 - Activates major compliance standards (AWS Foundational Security Best Practices, CIS, PCI-DSS)
+
+### disable-security-hub.sh
+- Checks Security Hub status before attempting cleanup
+- Disables all enabled security standards (CIS, PCI-DSS, AWS Foundational Security Best Practices)
+- Removes and disassociates member accounts from Security Hub
+- Cleans up custom insights and action targets
+- Safely disables Security Hub with proper error handling
+- Provides detailed status updates throughout the process
 
 ### get-findings.sh
 - Retrieves all Security Hub findings
