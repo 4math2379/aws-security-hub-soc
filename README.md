@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://makeapullrequest.com)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/4math2379/aws-security-hub-soc/graphs/commit-activity)
-[![Version](https://img.shields.io/badge/version-v1.0.0-blue)](https://github.com/4math2379/aws-security-hub-soc/releases/tag/v1.0.0)
+[![Version](https://img.shields.io/badge/version-v1.1.0-blue)](https://github.com/4math2379/aws-security-hub-soc/releases/tag/v1.1.0)
 [![Security](https://img.shields.io/badge/Security-SOC%202-red)](https://www.sans.org/cyber-security-courses/security-operations-essentials/)
 
 A comprehensive Docker-based solution that enables SysOps and audit teams to apply SOC methodologies when managing AWS Security Hub across multiple AWS accounts and landing zones.
