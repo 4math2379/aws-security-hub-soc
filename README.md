@@ -86,7 +86,9 @@ aws-sec/
 │   ├── enable-macie.sh
 │   ├── check-macie-status.sh
 │   ├── create-macie-classification-job.sh
-│   └── get-macie-findings.sh
+│   ├── get-macie-findings.sh
+│   ├── disable-macie.sh
+│   └── list-macie-resources.sh
 ├── output/                   # Output directory for reports
 │   ├── account1/
 │   ├── account2/
@@ -199,6 +201,16 @@ Inside any container, you can run the following scripts:
     ./get-macie-findings.sh
     ```
 
+12. **List All Macie Resources**
+    ```bash
+    ./list-macie-resources.sh
+    ```
+
+13. **Disable Macie and Clean Up**
+    ```bash
+    ./disable-macie.sh
+    ```
+
 ## Scripts Description
 
 ### enable-security-hub.sh
@@ -272,6 +284,22 @@ Inside any container, you can run the following scripts:
 - Exports findings to JSON format
 - Provides severity and type analysis
 - Checks Security Hub integration status
+
+### list-macie-resources.sh
+- Lists all Macie resources for comprehensive auditing
+- Shows classification jobs, buckets, custom identifiers, filters
+- Displays member accounts and administrator relationships
+- Provides usage statistics and resource summaries
+- Generates detailed resource inventory reports
+
+### disable-macie.sh
+- Safely disables Amazon Macie with comprehensive cleanup
+- Cancels running classification jobs before disabling
+- Removes custom data identifiers, filters, and allow lists
+- Disables Security Hub integration
+- Removes member accounts and administrator relationships
+- Cleans up local output files with user confirmation
+- Provides detailed cleanup progress and verification
 
 ## Real-World Benefits
 
