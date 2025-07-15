@@ -36,7 +36,7 @@ aws macie2 list-findings \
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}Findings exported to: $OUTPUT_FILE${NC}"
     
-# Count findings using AWS CLI query
+    # Count findings using AWS CLI query
     FINDING_COUNT=$(aws macie2 list-findings --region $REGION --query 'length(findingIds)' --output text)
     echo -e "${BLUE}Total findings: $FINDING_COUNT${NC}"
     
