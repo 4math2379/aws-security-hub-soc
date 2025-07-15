@@ -11,7 +11,7 @@ services:
       - ./output/account1:/output
     working_dir: /aws-scripts
     environment:
-      - AWS_DEFAULT_REGION=eu-west-3
+      - AWS_DEFAULT_REGION=eu-central-1
       - ACCOUNT_NAME=account1
     entrypoint: ["/bin/bash"]
     tty: true
@@ -29,7 +29,7 @@ services:
       - ./output/account2:/output
     working_dir: /aws-scripts
     environment:
-      - AWS_DEFAULT_REGION=eu-west-3
+      - AWS_DEFAULT_REGION=eu-central-1
       - ACCOUNT_NAME=account2
     entrypoint: ["/bin/bash"]
     tty: true
@@ -47,7 +47,7 @@ services:
       - ./output/account3:/output
     working_dir: /aws-scripts
     environment:
-      - AWS_DEFAULT_REGION=eu-west-3
+      - AWS_DEFAULT_REGION=eu-central-1
       - ACCOUNT_NAME=account3
     entrypoint: ["/bin/bash"]
     tty: true
@@ -65,7 +65,7 @@ services:
       - ./output/aggregated:/output
     working_dir: /aws-scripts
     environment:
-      - AWS_DEFAULT_REGION=eu-west-3
+      - AWS_DEFAULT_REGION=eu-central-1
       - ACCOUNT_NAME=master
     entrypoint: ["/bin/bash"]
     tty: true

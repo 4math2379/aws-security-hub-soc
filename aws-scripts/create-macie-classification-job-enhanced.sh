@@ -2,7 +2,7 @@
 
 echo "Creating Amazon Macie Classification Job for ${ACCOUNT_NAME:-default}..."
 
-REGION=${AWS_DEFAULT_REGION:-us-west-2}
+REGION=${AWS_DEFAULT_REGION:-eu-central-1}
 
 # Color codes for output
 RED='\033[0;31m'
@@ -25,6 +25,8 @@ if [ -z "$ACCOUNT_ID" ] || [ "$ACCOUNT_ID" = "None" ]; then
     exit 1
 fi
 echo -e "${BLUE}Account ID: $ACCOUNT_ID${NC}"
+echo -e "${BLUE}Macie Region: $REGION${NC}"
+echo -e "${YELLOW}Note: Macie can only classify buckets in the same region where it's enabled.${NC}"
 
 echo -e "\n=== Available S3 Buckets for Classification ==="
 # Get bucket names as text list
@@ -38,16 +40,42 @@ fi
 echo "Available buckets:"
 echo "$BUCKET_NAMES" | tr '\t' '\n' | nl -v 0
 
-echo -e "\n=== Bucket Privacy Status ==="
-echo "Checking bucket privacy settings..."
+echo -e "\n=== Bucket Privacy Status and Region Check ==="
+echo "Checking bucket privacy settings and regions..."
+VALID_BUCKETS=()
 for bucket in $BUCKET_NAMES; do
-    # Check if bucket has public access block
-    PUBLIC_ACCESS=$(aws s3api get-public-access-block --bucket "$bucket" --query 'PublicAccessBlockConfiguration.BlockPublicAcls' --output text 2>/dev/null)
-    if [ "$PUBLIC_ACCESS" = "True" ]; then
-        echo -e "${GREEN}✓ $bucket - Private (recommended for classification)${NC}"
-    else
-        echo -e "${YELLOW}⚠ $bucket - Public or no access block configured${NC}"
+    # Check bucket region
+    BUCKET_REGION=$(aws s3api get-bucket-location --bucket "$bucket" --query 'LocationConstraint' --output text 2>/dev/null)
+    if [ "$BUCKET_REGION" = "None" ]; then
+        BUCKET_REGION="us-east-1"  # Default region
     fi
+    
+    # Check if bucket is in the same region as Macie
+    if [ "$BUCKET_REGION" = "$REGION" ]; then
+        # Check if bucket has public access block
+        PUBLIC_ACCESS=$(aws s3api get-public-access-block --bucket "$bucket" --query 'PublicAccessBlockConfiguration.BlockPublicAcls' --output text 2>/dev/null)
+        if [ "$PUBLIC_ACCESS" = "True" ]; then
+            echo -e "${GREEN}✓ $bucket - Private, Region: $BUCKET_REGION (recommended)${NC}"
+            VALID_BUCKETS+=("$bucket")
+        else
+            echo -e "${YELLOW}⚠ $bucket - Public, Region: $BUCKET_REGION (not recommended)${NC}"
+            VALID_BUCKETS+=("$bucket")
+        fi
+    else
+        echo -e "${RED}✗ $bucket - Region: $BUCKET_REGION (incompatible with Macie region: $REGION)${NC}"
+    fi
+done
+
+if [ ${#VALID_BUCKETS[@]} -eq 0 ]; then
+    echo -e "${RED}No buckets found in region $REGION for Macie classification.${NC}"
+    echo -e "${YELLOW}Macie can only classify buckets in the same region where it's enabled.${NC}"
+    exit 1
+fi
+
+echo -e "\n=== Valid Buckets for Classification ==="
+echo "Buckets in region $REGION:"
+for i in "${!VALID_BUCKETS[@]}"; do
+    echo "     $i  ${VALID_BUCKETS[$i]}"
 done
 
 echo -e "\n${BLUE}Note: Private buckets are recommended for sensitive data discovery.${NC}"
@@ -56,8 +84,8 @@ echo -e "\n${BLUE}Note: Private buckets are recommended for sensitive data disco
 echo -e "\n${BLUE}Select bucket for classification (enter number, or 'all' for first 5 buckets):${NC}"
 read -r SELECTION
 
-# Convert to array for easier handling
-BUCKET_ARRAY=($BUCKET_NAMES)
+# Use the filtered valid buckets array
+BUCKET_ARRAY=("${VALID_BUCKETS[@]}")
 BUCKET_COUNT=${#BUCKET_ARRAY[@]}
 
 # Create temporary JSON file for job definition
