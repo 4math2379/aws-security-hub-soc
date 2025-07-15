@@ -12,53 +12,71 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Check if Macie is enabled
-STATUS=$(aws macie2 get-macie-session --region $REGION 2>/dev/null | jq -r .status)
+STATUS=$(aws macie2 get-macie-session --region $REGION --query 'status' --output text 2>/dev/null)
 if [ "$STATUS" != "ENABLED" ]; then
     echo -e "${RED}Amazon Macie is not enabled. Please run ./enable-macie.sh first.${NC}"
     exit 1
 fi
 
 echo -e "\n=== Available S3 Buckets for Classification ==="
-BUCKETS=$(aws macie2 describe-buckets --region $REGION --query 'buckets[].bucketName' --output json)
-echo "$BUCKETS" | jq -r '.[]' | nl -v 0
-
-# Get bucket count
-BUCKET_COUNT=$(echo "$BUCKETS" | jq length)
-if [ "$BUCKET_COUNT" -eq 0 ]; then
+# Get bucket names as text list
+BUCKET_NAMES=$(aws macie2 describe-buckets --region $REGION --query 'buckets[].bucketName' --output text)
+if [ -z "$BUCKET_NAMES" ]; then
     echo -e "${YELLOW}No S3 buckets found for classification.${NC}"
     exit 0
 fi
+
+# Display buckets with numbers
+echo "Available buckets:"
+echo "$BUCKET_NAMES" | tr '\t' '\n' | nl -v 0
 
 # Interactive bucket selection
 echo -e "\n${BLUE}Select bucket for classification (enter number, or 'all' for all buckets):${NC}"
 read -r SELECTION
 
+# Convert to array for easier handling
+BUCKET_ARRAY=($BUCKET_NAMES)
+BUCKET_COUNT=${#BUCKET_ARRAY[@]}
+
 if [ "$SELECTION" = "all" ]; then
     echo -e "${YELLOW}Creating classification job for all buckets...${NC}"
-    SELECTED_BUCKETS="$BUCKETS"
+    SELECTED_BUCKETS="${BUCKET_ARRAY[@]}"
 else
     if ! [[ "$SELECTION" =~ ^[0-9]+$ ]] || [ "$SELECTION" -ge "$BUCKET_COUNT" ]; then
         echo -e "${RED}Invalid selection. Please enter a valid number.${NC}"
         exit 1
     fi
-    SELECTED_BUCKET=$(echo "$BUCKETS" | jq -r ".[$SELECTION]")
-    SELECTED_BUCKETS="[\"$SELECTED_BUCKET\"]"
+    SELECTED_BUCKETS="${BUCKET_ARRAY[$SELECTION]}"
 fi
-
-# Create S3 job scope
-S3_JOB_SCOPE=$(echo "$SELECTED_BUCKETS" | jq -r 'map({"bucket": {"name": .}}) | {s3JobDefinition: {bucketDefinitions: .}}')
 
 # Job name with timestamp
 JOB_NAME="sensitive-data-discovery-$(date +%Y%m%d-%H%M%S)"
 
 echo -e "\n=== Creating Classification Job: $JOB_NAME ==="
 
-# Create the classification job
+# Create a simple classification job for the first available bucket
+# This is a simplified version that works without jq
+FIRST_BUCKET="${BUCKET_ARRAY[0]}"
+if [ "$SELECTION" != "all" ]; then
+    FIRST_BUCKET="${BUCKET_ARRAY[$SELECTION]}"
+fi
+
+echo -e "${BLUE}Creating job for bucket: $FIRST_BUCKET${NC}"
+
+# Create the classification job using AWS CLI with inline JSON
 aws macie2 create-classification-job \
     --job-type ONE_TIME \
     --name "$JOB_NAME" \
     --description "Sensitive data discovery job for account ${ACCOUNT_NAME}" \
-    --s3-job-definition "$S3_JOB_SCOPE" \
+    --s3-job-definition "{
+        \"bucketDefinitions\": [
+            {
+                \"bucket\": {
+                    \"name\": \"$FIRST_BUCKET\"
+                }
+            }
+        ]
+    }" \
     --region $REGION
 
 if [ $? -eq 0 ]; then
@@ -67,7 +85,7 @@ if [ $? -eq 0 ]; then
     echo -e "\n=== Job Details ==="
     echo "Job Name: $JOB_NAME"
     echo "Job Type: ONE_TIME"
-    echo "Selected Buckets: $(echo "$SELECTED_BUCKETS" | jq -r '.[]' | tr '\n' ' ')"
+    echo "Selected Bucket: $FIRST_BUCKET"
     
     # List current jobs
     echo -e "\n=== Current Classification Jobs ==="
@@ -78,6 +96,11 @@ if [ $? -eq 0 ]; then
     
     echo -e "\n${BLUE}Monitor job progress with: ./get-macie-findings.sh${NC}"
     echo -e "${BLUE}Check findings in Security Hub integration${NC}"
+    
+    if [ "$SELECTION" = "all" ]; then
+        echo -e "\n${YELLOW}Note: This simplified version creates a job for the first bucket only.${NC}"
+        echo -e "${YELLOW}For multiple buckets, create separate jobs or use the AWS Console.${NC}"
+    fi
 else
     echo -e "${RED}Failed to create classification job${NC}"
     exit 1

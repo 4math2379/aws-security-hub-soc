@@ -12,7 +12,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 echo -e "\n=== Amazon Macie Service Status ==="
-STATUS=$(aws macie2 get-macie-session --region $REGION 2>/dev/null | jq -r .status)
+STATUS=$(aws macie2 get-macie-session --region $REGION --query 'status' --output text 2>/dev/null)
 if [ "$STATUS" = "ENABLED" ]; then
     echo -e "${GREEN}✓ Amazon Macie is ENABLED${NC}"
     

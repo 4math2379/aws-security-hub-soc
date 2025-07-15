@@ -12,7 +12,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 echo -e "\n=== Checking Amazon Macie Status ==="
-STATUS=$(aws macie2 get-macie-session --region $REGION 2>/dev/null | jq -r .status)
+STATUS=$(aws macie2 get-macie-session --region $REGION --query 'status' --output text 2>/dev/null)
 if [ "$STATUS" != "ENABLED" ]; then
     echo -e "${YELLOW}Amazon Macie is not enabled. Enabling now...${NC}"
     aws macie2 enable-macie --region $REGION
@@ -25,7 +25,7 @@ if [ "$STATUS" != "ENABLED" ]; then
         # Check if Macie is properly initialized
         for i in {1..6}; do
             echo -e "${BLUE}Checking Macie status (attempt $i/6)...${NC}"
-            STATUS=$(aws macie2 get-macie-session --region $REGION 2>/dev/null | jq -r .status)
+            STATUS=$(aws macie2 get-macie-session --region $REGION --query 'status' --output text 2>/dev/null)
             if [ "$STATUS" = "ENABLED" ]; then
                 echo -e "${GREEN}Macie is now fully initialized!${NC}"
                 break

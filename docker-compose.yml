@@ -2,7 +2,8 @@
 
 services:
   awscli-account1:
-    image: amazon/aws-cli:latest
+    build: .
+    image: aws-security-hub-soc:latest
     container_name: aws-security-hub-account1
     volumes:
       - ./aws-credentials/account1:/root/.aws:ro
@@ -19,7 +20,8 @@ services:
       - aws-security-network
 
   awscli-account2:
-    image: amazon/aws-cli:latest
+    build: .
+    image: aws-security-hub-soc:latest
     container_name: aws-security-hub-account2
     volumes:
       - ./aws-credentials/account2:/root/.aws:ro
@@ -36,7 +38,8 @@ services:
       - aws-security-network
 
   awscli-account3:
-    image: amazon/aws-cli:latest
+    build: .
+    image: aws-security-hub-soc:latest
     container_name: aws-security-hub-account3
     volumes:
       - ./aws-credentials/account3:/root/.aws:ro
@@ -53,7 +56,8 @@ services:
       - aws-security-network
 
   security-hub-aggregator:
-    image: amazon/aws-cli:latest
+    build: .
+    image: aws-security-hub-soc:latest
     container_name: aws-security-hub-aggregator
     volumes:
       - ./aws-credentials/master:/root/.aws:ro

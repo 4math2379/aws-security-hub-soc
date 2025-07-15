@@ -12,7 +12,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Check if Macie is enabled
-STATUS=$(aws macie2 get-macie-session --region $REGION 2>/dev/null | jq -r .status)
+STATUS=$(aws macie2 get-macie-session --region $REGION --query 'status' --output text 2e/dev/null)
 if [ "$STATUS" != "ENABLED" ]; then
     echo -e "${RED}Amazon Macie is not enabled. Please run ./enable-macie.sh first.${NC}"
     exit 1
@@ -36,35 +36,26 @@ aws macie2 list-findings \
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}Findings exported to: $OUTPUT_FILE${NC}"
     
-    # Count findings
-    FINDING_COUNT=$(jq '.findingIds | length' "$OUTPUT_FILE")
+# Count findings using AWS CLI query
+    FINDING_COUNT=$(aws macie2 list-findings --region $REGION --query 'length(findingIds)' --output text)
     echo -e "${BLUE}Total findings: $FINDING_COUNT${NC}"
     
     if [ "$FINDING_COUNT" -gt 0 ]; then
-        echo -e "\n=== Getting Detailed Findings ==="
-        DETAILED_OUTPUT_FILE="/output/macie-findings-detailed-${TIMESTAMP}.json"
+        echo -e "\n=== Finding IDs ==="
+        aws macie2 list-findings \
+            --region $REGION \
+            --query 'findingIds[0:10]' \
+            --output table
         
-        # Get detailed findings
-        FINDING_IDS=$(jq -r '.findingIds[]' "$OUTPUT_FILE" | head -50 | tr '\n' ' ')
-        if [ -n "$FINDING_IDS" ]; then
+        echo -e "\n=== Sample Findings Details ==="
+        # Get first few finding IDs
+        FIRST_FINDING_ID=$(aws macie2 list-findings --region $REGION --query 'findingIds[0]' --output text)
+        if [ "$FIRST_FINDING_ID" != "None" ] && [ -n "$FIRST_FINDING_ID" ]; then
+            echo -e "${BLUE}Getting details for finding: $FIRST_FINDING_ID${NC}"
             aws macie2 get-findings \
-                --finding-ids $FINDING_IDS \
+                --finding-ids "$FIRST_FINDING_ID" \
                 --region $REGION \
-                --output json > "$DETAILED_OUTPUT_FILE"
-            
-            echo -e "${GREEN}Detailed findings exported to: $DETAILED_OUTPUT_FILE${NC}"
-            
-            # Summary by severity
-            echo -e "\n=== Findings Summary by Severity ==="
-            jq -r '.findings[] | .severity.description' "$DETAILED_OUTPUT_FILE" | sort | uniq -c | sort -nr
-            
-            # Summary by type
-            echo -e "\n=== Findings Summary by Type ==="
-            jq -r '.findings[] | .type' "$DETAILED_OUTPUT_FILE" | sort | uniq -c | sort -nr
-            
-            # Sample findings
-            echo -e "\n=== Sample Findings (High/Medium Severity) ==="
-            jq -r '.findings[] | select(.severity.description == "High" or .severity.description == "Medium") | {title: .title, description: .description, severity: .severity.description, resource: .resources[0].resourcesAffected.s3Bucket.name}' "$DETAILED_OUTPUT_FILE" | head -20
+                --output table
         fi
     else
         echo -e "${YELLOW}No findings found. This could mean:${NC}"
