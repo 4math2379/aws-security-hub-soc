@@ -51,6 +51,7 @@ This repository provides a containerized approach to managing AWS Security Hub f
 - AWS Config
 - Amazon GuardDuty
 - AWS Inspector
+- **Amazon Macie** (for sensitive data discovery)
 - AWS CloudTrail
 - AWS IAM
 - Amazon S3
@@ -81,7 +82,13 @@ aws-sec/
 │   ├── aggregate-findings.sh
 │   ├── export-findings-csv.sh
 │   ├── remediate-findings.sh
-│   └── monitor-compliance.sh
+│   ├── monitor-compliance.sh
+│   ├── enable-macie.sh
+│   ├── check-macie-status.sh
+│   ├── create-macie-classification-job.sh
+│   ├── get-macie-findings.sh
+│   ├── disable-macie.sh
+│   └── list-macie-resources.sh
 ├── output/                   # Output directory for reports
 │   ├── account1/
 │   ├── account2/
@@ -171,6 +178,39 @@ Inside any container, you can run the following scripts:
    ./disable-security-hub.sh
    ```
 
+### Amazon Macie for Sensitive Data Discovery
+
+8. **Enable Amazon Macie**
+   ```bash
+   ./enable-macie.sh
+   ```
+   *Note: Wait 5-15 minutes for bucket discovery to complete*
+
+9. **Check Macie Status**
+   ```bash
+   ./check-macie-status.sh
+   ```
+
+10. **Create Classification Job**
+    ```bash
+    ./create-macie-classification-job.sh
+    ```
+
+11. **Get Macie Findings**
+    ```bash
+    ./get-macie-findings.sh
+    ```
+
+12. **List All Macie Resources**
+    ```bash
+    ./list-macie-resources.sh
+    ```
+
+13. **Disable Macie and Clean Up**
+    ```bash
+    ./disable-macie.sh
+    ```
+
 ## Scripts Description
 
 ### enable-security-hub.sh
@@ -220,6 +260,46 @@ Inside any container, you can run the following scripts:
 - Runs from master account
 - Aggregates findings across all member accounts
 - Provides cross-account visibility
+
+### enable-macie.sh
+- Enables Amazon Macie for sensitive data discovery
+- Configures integration with Security Hub
+- Waits for service initialization and bucket discovery (5-15 minutes)
+- Provides readiness assessment
+
+### check-macie-status.sh
+- Checks Macie service status and readiness
+- Displays bucket discovery progress
+- Shows current classification jobs
+- Provides next steps guidance
+
+### create-macie-classification-job.sh
+- Creates classification jobs for S3 buckets
+- Interactive bucket selection (single or all buckets)
+- Configures one-time sensitive data discovery jobs
+- Monitors job creation and status
+
+### get-macie-findings.sh
+- Retrieves and summarizes Macie findings
+- Exports findings to JSON format
+- Provides severity and type analysis
+- Checks Security Hub integration status
+
+### list-macie-resources.sh
+- Lists all Macie resources for comprehensive auditing
+- Shows classification jobs, buckets, custom identifiers, filters
+- Displays member accounts and administrator relationships
+- Provides usage statistics and resource summaries
+- Generates detailed resource inventory reports
+
+### disable-macie.sh
+- Safely disables Amazon Macie with comprehensive cleanup
+- Cancels running classification jobs before disabling
+- Removes custom data identifiers, filters, and allow lists
+- Disables Security Hub integration
+- Removes member accounts and administrator relationships
+- Cleans up local output files with user confirmation
+- Provides detailed cleanup progress and verification
 
 ## Real-World Benefits
 
