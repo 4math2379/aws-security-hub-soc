@@ -19,7 +19,7 @@ datasources:
     jsonData:
       interval: Daily
       timeField: "@timestamp"
-      esVersion: 70
+      esVersion: 80
       maxConcurrentShardRequests: 5
       includeFrozen: false
       logMessageField: message
