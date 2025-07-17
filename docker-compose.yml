@@ -73,6 +73,102 @@ services:
     networks:
       - aws-security-network
 
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: aws-security-hub-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_INSTALL_PLUGINS=grafana-worldmap-panel,grafana-piechart-panel,grafana-clock-panel
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/aws-security-hub-overview.json
+    networks:
+      - aws-security-network
+    depends_on:
+      - prometheus
+      - elasticsearch
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: aws-security-hub-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/rules:/etc/prometheus/rules:ro
+      - prometheus-storage:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    networks:
+      - aws-security-network
+
+  # Elasticsearch for log aggregation and search
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+    container_name: aws-security-hub-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-storage:/usr/share/elasticsearch/data
+    networks:
+      - aws-security-network
+
+  # Logstash for data processing
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.8.0
+    container_name: aws-security-hub-logstash
+    volumes:
+      - ./logstash/config:/usr/share/logstash/config:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ./output:/usr/share/logstash/data/output:ro
+    ports:
+      - "5000:5000"
+    environment:
+      - LS_JAVA_OPTS=-Xmx256m -Xms256m
+    networks:
+      - aws-security-network
+    depends_on:
+      - elasticsearch
+
+  # Data processor for Security Hub findings
+  security-hub-processor:
+    build: .
+    image: aws-security-hub-soc:latest
+    container_name: aws-security-hub-processor
+    volumes:
+      - ./output:/output
+      - ./scripts:/scripts:ro
+      - ./data-processor:/data-processor:ro
+    working_dir: /data-processor
+    environment:
+      - PROMETHEUS_GATEWAY=http://prometheus:9090
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    networks:
+      - aws-security-network
+    depends_on:
+      - prometheus
+      - elasticsearch
+
+volumes:
+  grafana-storage:
+  prometheus-storage:
+  elasticsearch-storage:
+
 networks:
   aws-security-network:
     driver: bridge
