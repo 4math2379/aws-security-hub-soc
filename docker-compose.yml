@@ -1,6 +1,5 @@
-
-
 services:
+  # AWS CLI containers for each account
   awscli-account1:
     build: .
     image: aws-security-hub-soc:latest
@@ -72,6 +71,27 @@ services:
     stdin_open: true
     networks:
       - aws-security-network
+
+  # Flask Dashboard for Security Hub Findings
+  security-dashboard:
+    build: 
+      context: .
+      dockerfile: Dockerfile-dashboard
+    container_name: aws-security-hub-dashboard
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./output:/app/output:ro
+      - ./app.py:/app/app.py:ro
+      - ./templates:/app/templates:ro
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - aws-security-network
+    depends_on:
+      - awscli-account1
+      - awscli-account2
+      - awscli-account3
 
 networks:
   aws-security-network:
