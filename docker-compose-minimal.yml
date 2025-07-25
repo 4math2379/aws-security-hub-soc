@@ -1,0 +1,60 @@
+services:
+  # AWS CLI containers for each account - minimal volumes
+  awscli-account1:
+    build: .
+    image: aws-security-hub-soc:latest
+    container_name: aws-security-hub-account1
+    working_dir: /aws-scripts
+    volumes:
+      - ./aws-scripts:/aws-scripts
+      - ./aws-credentials:/aws-credentials:ro
+      - ./output:/output
+    environment:
+      - AWS_DEFAULT_REGION=eu-central-1
+      - ACCOUNT_NAME=account1
+      - AWS_CONFIG_FILE=/aws-credentials/account1/config
+      - AWS_SHARED_CREDENTIALS_FILE=/aws-credentials/account1/credentials
+    entrypoint: ["/bin/bash"]
+    tty: true
+    stdin_open: true
+    networks:
+      - aws-security-network
+
+  awscli-account2:
+    build: .
+    image: aws-security-hub-soc:latest
+    container_name: aws-security-hub-account2
+    working_dir: /aws-scripts
+    volumes:
+      - ./aws-scripts:/aws-scripts
+      - ./aws-credentials:/aws-credentials:ro
+      - ./output:/output
+    environment:
+      - AWS_DEFAULT_REGION=eu-central-1
+      - ACCOUNT_NAME=account2
+      - AWS_CONFIG_FILE=/aws-credentials/account2/config
+      - AWS_SHARED_CREDENTIALS_FILE=/aws-credentials/account2/credentials
+    entrypoint: ["/bin/bash"]
+    tty: true
+    stdin_open: true
+    networks:
+      - aws-security-network
+
+  # Flask Dashboard for Security Hub Findings - minimal volumes
+  security-dashboard:
+    build: 
+      context: .
+      dockerfile: Dockerfile-dashboard
+    container_name: aws-security-hub-dashboard
+    volumes:
+      - ./output:/output
+    ports:
+      - "5001:5000"
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - aws-security-network
+
+networks:
+  aws-security-network:
+    driver: bridge

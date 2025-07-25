@@ -3,7 +3,7 @@ FROM amazon/aws-cli:latest AS builder
 
 # Install build dependencies and tools
 RUN yum update -y && \
-    yum install -y jq python3 python3-pip curl wget tar gzip && \
+    yum install -y jq python3 python3-pip wget tar gzip && \
     yum clean all
 
 # Create directories for dependencies
@@ -16,10 +16,6 @@ RUN pip3 install --target=/app/python-deps \
     requests \
     PyYAML \
     jsonschema
-
-# Copy and install any custom requirements if they exist
-COPY data-processor/requirements.txt /tmp/requirements.txt 2>/dev/null || echo "# No custom requirements" > /tmp/requirements.txt
-RUN pip3 install --target=/app/python-deps -r /tmp/requirements.txt 2>/dev/null || true
 
 # Stage 2: Final runtime image
 FROM amazon/aws-cli:latest AS final
@@ -39,8 +35,8 @@ COPY --from=builder /app/tools /usr/local/bin/
 # Set Python path
 ENV PYTHONPATH="/usr/local/lib/python3.7/site-packages:${PYTHONPATH}"
 
-# Copy data processor if it exists
-COPY data-processor/ /data-processor/ 2>/dev/null || mkdir -p /data-processor
+# Create data processor directory
+RUN mkdir -p /data-processor
 
 # Set working directory
 WORKDIR /aws-scripts

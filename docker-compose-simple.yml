@@ -1,0 +1,19 @@
+services:
+  # Test service with minimal volumes
+  awscli-test:
+    build: .
+    image: aws-security-hub-soc:latest
+    container_name: aws-security-hub-test
+    working_dir: /aws-scripts
+    volumes:
+      - ./aws-scripts:/aws-scripts
+    environment:
+      - AWS_DEFAULT_REGION=eu-central-1
+      - ACCOUNT_NAME=test
+    entrypoint: ["/bin/bash"]
+    tty: true
+    stdin_open: true
+
+networks:
+  aws-security-network:
+    driver: bridge

@@ -6,12 +6,14 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Load CSV files
-CSV_PATH = './output/*/csv/*.csv'
+# Load CSV files - check both patterns
+CSV_PATH_PATTERN1 = '/output/*/csv/*.csv'  # Original pattern
+CSV_PATH_PATTERN2 = '/output/csv/*.csv'    # Direct csv folder pattern
 
 def load_data():
     """Load all CSV files and combine them"""
-    all_files = glob.glob(CSV_PATH)
+    # Try both patterns to find CSV files
+    all_files = glob.glob(CSV_PATH_PATTERN1) + glob.glob(CSV_PATH_PATTERN2)
     if not all_files:
         return pd.DataFrame()  # Return empty DataFrame if no files
     
@@ -19,8 +21,25 @@ def load_data():
     for filename in all_files:
         try:
             df = pd.read_csv(filename, index_col=None, header=0)
-            # Extract account name from file path
-            account_name = filename.split(os.sep)[-3] if len(filename.split(os.sep)) >= 3 else 'unknown'
+            # Extract account name from file path or filename
+            path_parts = filename.split(os.sep)
+            if len(path_parts) >= 3 and path_parts[-3] != 'output':
+                # Pattern: output/account/csv/file.csv
+                account_name = path_parts[-3]
+            else:
+                # Pattern: output/csv/findings-account-date.csv
+                basename = os.path.basename(filename)
+                if 'account' in basename.lower():
+                    # Try to extract account name from filename
+                    parts = basename.split('-')
+                    for i, part in enumerate(parts):
+                        if 'account' in part.lower():
+                            account_name = part
+                            break
+                    else:
+                        account_name = 'unknown'
+                else:
+                    account_name = 'unknown'
             df['Account'] = account_name
             df['FileName'] = os.path.basename(filename)
             li.append(df)
@@ -78,7 +97,7 @@ def index():
                            severity_dist=severity_dist,
                            account_dist=account_dist,
                            resource_dist=resource_dist,
-                           total_files=len(glob.glob(CSV_PATH)))
+                           total_files=len(glob.glob(CSV_PATH_PATTERN1) + glob.glob(CSV_PATH_PATTERN2)))
 
 @app.route('/api/data')
 def api_data():
