@@ -4,11 +4,15 @@ services:
     build: .
     image: aws-security-hub-soc:latest
     container_name: aws-security-hub-account1
-    volumes:
-      - ./aws-credentials/account1:/root/.aws:ro
-      - ./aws-scripts:/aws-scripts:ro
-      - ./output/account1:/output
     working_dir: /aws-scripts
+    volumes:
+      - ./aws-scripts:/aws-scripts
+      - ./aws-credentials:/aws-credentials:ro
+      - ./data-processor:/data-processor
+      - ./output:/output
+      - ./docs:/docs:ro
+      - ./templates:/templates:ro
+      - ./scripts:/scripts:ro
     environment:
       - AWS_DEFAULT_REGION=eu-central-1
       - ACCOUNT_NAME=account1
@@ -22,11 +26,15 @@ services:
     build: .
     image: aws-security-hub-soc:latest
     container_name: aws-security-hub-account2
-    volumes:
-      - ./aws-credentials/account2:/root/.aws:ro
-      - ./aws-scripts:/aws-scripts:ro
-      - ./output/account2:/output
     working_dir: /aws-scripts
+    volumes:
+      - ./aws-scripts:/aws-scripts
+      - ./aws-credentials:/aws-credentials:ro
+      - ./data-processor:/data-processor
+      - ./output:/output
+      - ./docs:/docs:ro
+      - ./templates:/templates:ro
+      - ./scripts:/scripts:ro
     environment:
       - AWS_DEFAULT_REGION=eu-central-1
       - ACCOUNT_NAME=account2
@@ -40,11 +48,15 @@ services:
     build: .
     image: aws-security-hub-soc:latest
     container_name: aws-security-hub-account3
-    volumes:
-      - ./aws-credentials/account3:/root/.aws:ro
-      - ./aws-scripts:/aws-scripts:ro
-      - ./output/account3:/output
     working_dir: /aws-scripts
+    volumes:
+      - ./aws-scripts:/aws-scripts
+      - ./aws-credentials:/aws-credentials:ro
+      - ./data-processor:/data-processor
+      - ./output:/output
+      - ./docs:/docs:ro
+      - ./templates:/templates:ro
+      - ./scripts:/scripts:ro
     environment:
       - AWS_DEFAULT_REGION=eu-central-1
       - ACCOUNT_NAME=account3
@@ -58,11 +70,15 @@ services:
     build: .
     image: aws-security-hub-soc:latest
     container_name: aws-security-hub-aggregator
-    volumes:
-      - ./aws-credentials/master:/root/.aws:ro
-      - ./aws-scripts:/aws-scripts:ro
-      - ./output/aggregated:/output
     working_dir: /aws-scripts
+    volumes:
+      - ./aws-scripts:/aws-scripts
+      - ./aws-credentials:/aws-credentials:ro
+      - ./data-processor:/data-processor
+      - ./output:/output
+      - ./docs:/docs:ro
+      - ./templates:/templates:ro
+      - ./scripts:/scripts:ro
     environment:
       - AWS_DEFAULT_REGION=eu-central-1
       - ACCOUNT_NAME=master
@@ -78,12 +94,12 @@ services:
       context: .
       dockerfile: Dockerfile-dashboard
     container_name: aws-security-hub-dashboard
+    volumes:
+      - ./data-processor:/data-processor
+      - ./output:/output
+      - ./templates:/templates:ro
     ports:
       - "5001:5000"
-    volumes:
-      - ./output:/app/output:ro
-      - ./app.py:/app/app.py:ro
-      - ./templates:/app/templates:ro
     environment:
       - FLASK_ENV=development
     networks:
