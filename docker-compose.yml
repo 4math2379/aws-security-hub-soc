@@ -1,21 +1,26 @@
 services:
-  # AWS CLI containers for each account
+  # AWS CLI containers for each account with Prowler integration
   awscli-account1:
     build: .
     image: aws-security-hub-soc:latest
-    container_name: aws-security-hub-account1
+    container_name: latecoere-aero
     working_dir: /aws-scripts
     volumes:
       - ./aws-scripts:/aws-scripts
-      - ./aws-credentials:/aws-credentials:ro
+      - ./aws-credentials/latecoere.aero:/root/.aws:ro
       - ./data-processor:/data-processor
-      - ./output:/output
+      - ./output/latecoere.aero:/output
       - ./docs:/docs:ro
       - ./templates:/templates:ro
       - ./scripts:/scripts:ro
     environment:
-      - AWS_DEFAULT_REGION=eu-central-1
-      - ACCOUNT_NAME=account1
+      - AWS_DEFAULT_REGION=us-east-1
+      - ACCOUNT_NAME=latecoere.aero
+      - AWS_CONFIG_FILE=/root/.aws/config
+      - AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials
+      # Prowler specific configurations
+      - PROWLER_OUTPUT_DIR=/output/prowler
+      - PROWLER_LOG_LEVEL=WARNING
     entrypoint: ["/bin/bash"]
     tty: true
     stdin_open: true
@@ -25,19 +30,24 @@ services:
   awscli-account2:
     build: .
     image: aws-security-hub-soc:latest
-    container_name: aws-security-hub-account2
+    container_name: aws-ACS-DATA
     working_dir: /aws-scripts
     volumes:
       - ./aws-scripts:/aws-scripts
-      - ./aws-credentials:/aws-credentials:ro
+      - ./aws-credentials/aws-ACS-DATA:/root/.aws:ro
       - ./data-processor:/data-processor
-      - ./output:/output
+      - ./output/aws-ACS-DATA:/output
       - ./docs:/docs:ro
       - ./templates:/templates:ro
       - ./scripts:/scripts:ro
     environment:
-      - AWS_DEFAULT_REGION=eu-central-1
-      - ACCOUNT_NAME=account2
+      - AWS_DEFAULT_REGION=eu-west-3
+      - ACCOUNT_NAME=aws-ACS-DATA
+      - AWS_CONFIG_FILE=/root/.aws/config
+      - AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials
+      # Prowler specific configurations
+      - PROWLER_OUTPUT_DIR=/output/prowler
+      - PROWLER_LOG_LEVEL=WARNING
     entrypoint: ["/bin/bash"]
     tty: true
     stdin_open: true
@@ -51,15 +61,20 @@ services:
     working_dir: /aws-scripts
     volumes:
       - ./aws-scripts:/aws-scripts
-      - ./aws-credentials:/aws-credentials:ro
+      - ./aws-credentials/account3:/root/.aws:ro
       - ./data-processor:/data-processor
-      - ./output:/output
+      - ./output/account3:/output
       - ./docs:/docs:ro
       - ./templates:/templates:ro
       - ./scripts:/scripts:ro
     environment:
       - AWS_DEFAULT_REGION=eu-central-1
       - ACCOUNT_NAME=account3
+      - AWS_CONFIG_FILE=/root/.aws/config
+      - AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials
+      # Prowler specific configurations
+      - PROWLER_OUTPUT_DIR=/output/prowler
+      - PROWLER_LOG_LEVEL=WARNING
     entrypoint: ["/bin/bash"]
     tty: true
     stdin_open: true
@@ -73,15 +88,20 @@ services:
     working_dir: /aws-scripts
     volumes:
       - ./aws-scripts:/aws-scripts
-      - ./aws-credentials:/aws-credentials:ro
+      - ./aws-credentials/master:/root/.aws:ro
       - ./data-processor:/data-processor
-      - ./output:/output
+      - ./output/aggregated:/output
       - ./docs:/docs:ro
       - ./templates:/templates:ro
       - ./scripts:/scripts:ro
     environment:
       - AWS_DEFAULT_REGION=eu-central-1
       - ACCOUNT_NAME=master
+      - AWS_CONFIG_FILE=/root/.aws/config
+      - AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials
+      # Prowler and aggregation specific configurations
+      - PROWLER_OUTPUT_DIR=/output/prowler
+      - PROWLER_LOG_LEVEL=WARNING
     entrypoint: ["/bin/bash"]
     tty: true
     stdin_open: true

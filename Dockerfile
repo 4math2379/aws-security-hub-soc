@@ -3,19 +3,35 @@ FROM amazon/aws-cli:latest AS builder
 
 # Install build dependencies and tools
 RUN yum update -y && \
-    yum install -y jq python3 python3-pip wget tar gzip && \
+    yum install -y jq python3 python3-pip wget tar gzip git gcc python3-devel && \
     yum clean all
+
+# Upgrade pip first
+RUN python3 -m pip install --upgrade pip setuptools wheel
 
 # Create directories for dependencies
 RUN mkdir -p /app/tools /app/python-deps
 
-# Install common Python packages that might be needed
+# Install common Python packages first
 RUN pip3 install --target=/app/python-deps \
     boto3 \
-    pandas \
+    botocore \
     requests \
     PyYAML \
-    jsonschema
+    jsonschema \
+    rich \
+    colorama \
+    tabulate \
+    pandas
+
+# Install security assessment dependencies (Prowler requires Python 3.9+, so we'll create alternative)
+RUN echo "Installing security assessment tools compatible with Python 3.7..." && \
+    pip3 install --target=/app/python-deps \
+        "click" \
+        "tqdm" \
+        "yaspin" \
+        "python-dateutil" && \
+    echo "Security tools installed - will use custom Prowler-compatible scripts"
 
 # Stage 2: Final runtime image
 FROM amazon/aws-cli:latest AS final

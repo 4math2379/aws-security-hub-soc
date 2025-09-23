@@ -1,19 +1,23 @@
 services:
-  # AWS CLI containers for each account - minimal volumes
+  # AWS CLI containers for each account - minimal volumes with Prowler
   awscli-account1:
     build: .
     image: aws-security-hub-soc:latest
-    container_name: aws-security-hub-account1
+    container_name: latecoere.aero
     working_dir: /aws-scripts
     volumes:
       - ./aws-scripts:/aws-scripts
-      - ./aws-credentials:/aws-credentials:ro
-      - ./output:/output
+      - ./aws-credentials/latecoere.aero:/root/.aws:ro
+      - ./data-processor:/data-processor
+      - ./output/latecoere.aero:/output
     environment:
-      - AWS_DEFAULT_REGION=eu-central-1
-      - ACCOUNT_NAME=account1
-      - AWS_CONFIG_FILE=/aws-credentials/account1/config
-      - AWS_SHARED_CREDENTIALS_FILE=/aws-credentials/account1/credentials
+      - AWS_DEFAULT_REGION=eu-west-1
+      - ACCOUNT_NAME=latecoere.aero
+      - AWS_CONFIG_FILE=/root/.aws/config
+      - AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials
+      # Prowler specific configurations
+      - PROWLER_OUTPUT_DIR=/output/prowler
+      - PROWLER_LOG_LEVEL=WARNING
     entrypoint: ["/bin/bash"]
     tty: true
     stdin_open: true
@@ -23,17 +27,93 @@ services:
   awscli-account2:
     build: .
     image: aws-security-hub-soc:latest
-    container_name: aws-security-hub-account2
+    container_name: aws-ACS-DATA
     working_dir: /aws-scripts
     volumes:
       - ./aws-scripts:/aws-scripts
-      - ./aws-credentials:/aws-credentials:ro
-      - ./output:/output
+      - ./aws-credentials/aws-ACS-DATA:/root/.aws:ro
+      - ./data-processor:/data-processor
+      - ./output/aws-ACS-DATA:/output
     environment:
-      - AWS_DEFAULT_REGION=eu-central-1
-      - ACCOUNT_NAME=account2
-      - AWS_CONFIG_FILE=/aws-credentials/account2/config
-      - AWS_SHARED_CREDENTIALS_FILE=/aws-credentials/account2/credentials
+      - AWS_DEFAULT_REGION=eu-west-3
+      - ACCOUNT_NAME=aws-ACS-DATA
+      - AWS_CONFIG_FILE=/root/.aws/config
+      - AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials
+      # Prowler specific configurations
+      - PROWLER_OUTPUT_DIR=/output/prowler
+      - PROWLER_LOG_LEVEL=WARNING
+    entrypoint: ["/bin/bash"]
+    tty: true
+    stdin_open: true
+    networks:
+      - aws-security-network
+
+  awscli-account3:
+    build: .
+    image: aws-security-hub-soc:latest
+    container_name: aws-cvlt-prod
+    working_dir: /aws-scripts
+    volumes:
+      - ./aws-scripts:/aws-scripts
+      - ./aws-credentials/aws-cvlt-prod:/root/.aws:ro
+      - ./data-processor:/data-processor
+      - ./output/aws-cvlt-prod:/output
+    environment:
+      - AWS_DEFAULT_REGION=eu-west-3
+      - ACCOUNT_NAME=aws-cvlt-prod
+      - AWS_CONFIG_FILE=/root/.aws/config
+      - AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials
+      # Prowler specific configurations
+      - PROWLER_OUTPUT_DIR=/output/prowler
+      - PROWLER_LOG_LEVEL=WARNING
+    entrypoint: ["/bin/bash"]
+    tty: true
+    stdin_open: true
+    networks:
+      - aws-security-network
+
+  awscli-account4:
+    build: .
+    image: aws-security-hub-soc:latest
+    container_name: aws-leap-prod
+    working_dir: /aws-scripts
+    volumes:
+      - ./aws-scripts:/aws-scripts
+      - ./aws-credentials/aws-leap-prod:/root/.aws:ro
+      - ./data-processor:/data-processor
+      - ./output/aws-leap-prod:/output
+    environment:
+      - AWS_DEFAULT_REGION=eu-west-1
+      - ACCOUNT_NAME=aws-leap-prod
+      - AWS_CONFIG_FILE=/root/.aws/config
+      - AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials
+      # Prowler specific configurations
+      - PROWLER_OUTPUT_DIR=/output/prowler
+      - PROWLER_LOG_LEVEL=WARNING
+    entrypoint: ["/bin/bash"]
+    tty: true
+    stdin_open: true
+    networks:
+      - aws-security-network
+
+  awscli-account5:
+    build: .
+    image: aws-security-hub-soc:latest
+    container_name: aws-leap-dev
+    working_dir: /aws-scripts
+    volumes:
+      - ./aws-scripts:/aws-scripts
+      - ./aws-credentials/aws-leap-dev:/root/.aws:ro
+      - ./data-processor:/data-processor
+      - ./output/aws-leap-dev:/output
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+      - ACCOUNT_NAME=aws-leap-dev
+      - AWS_CONFIG_FILE=/root/.aws/config
+      - AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials
+      # Prowler specific configurations
+      - PROWLER_OUTPUT_DIR=/output/prowler
+      - PROWLER_LOG_LEVEL=WARNING
     entrypoint: ["/bin/bash"]
     tty: true
     stdin_open: true
@@ -47,6 +127,7 @@ services:
       dockerfile: Dockerfile-dashboard
     container_name: aws-security-hub-dashboard
     volumes:
+      - ./data-processor:/data-processor
       - ./output:/output
     ports:
       - "5001:5000"
